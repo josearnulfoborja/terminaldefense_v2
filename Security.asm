@@ -23,10 +23,10 @@ PUBLIC IncAttempt, CheckBlocked, SecurityProc, ResetAttempts, AuthProc
     AUTH_OK_MSG      BYTE 'Acceso concedido.',0Dh,0Ah,0
     AUTH_FAIL_MSG    BYTE 'Contrasena incorrecta.',0Dh,0Ah,0
     AUTH_LOCKED_MSG  BYTE 'Acceso denegado: se agotaron los intentos.',0Dh,0Ah,0
-    LOG_AUTH_OK      BYTE 'AUTH: SUCCESS',0Dh,0Ah,0
-    LOG_AUTH_FAIL    BYTE 'AUTH: FAIL',0Dh,0Ah,0
-    LOG_AUTH_LOCKED  BYTE 'AUTH: LOCKED',0Dh,0Ah,0
-    LOG_BLOCK_INC    BYTE 'SECURITY: ATTEMPT_INCREMENT',0Dh,0Ah,0
+    LOG_AUTH_OK      BYTE 'AUTENTICACION: EXITO',0Dh,0Ah,0
+    LOG_AUTH_FAIL    BYTE 'AUTENTICACION: FALLO',0Dh,0Ah,0
+    LOG_AUTH_LOCKED  BYTE 'AUTENTICACION: BLOQUEADA',0Dh,0Ah,0
+    LOG_BLOCK_INC    BYTE 'SEGURIDAD: INTENTO_INCREMENTADO',0Dh,0Ah,0
 
 .code
 

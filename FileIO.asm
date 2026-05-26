@@ -219,10 +219,10 @@ LogFail:
 AppendLog ENDP
 
 .data
-LIST_HEADER BYTE 0Dh,0Ah,'Saved score files:',0Dh,0Ah,0
-PATH_LABEL BYTE 'Full path: ',0
-NO_FILES_MSG BYTE 'No saved player files found.',0Dh,0Ah,0
-SCORE_LABEL BYTE ' Score: ',0
+LIST_HEADER BYTE 0Dh,0Ah,'Archivos de puntaje guardados:',0Dh,0Ah,0
+PATH_LABEL BYTE 'Ruta completa: ',0
+NO_FILES_MSG BYTE 'No se encontraron archivos de jugadores guardados.',0Dh,0Ah,0
+SCORE_LABEL BYTE ' Puntaje: ',0
 CRLF_MSG BYTE 0Dh,0Ah,0
 
 DEL_PROMPT BYTE 'Ingrese nombre de jugador a borrar: ',0
@@ -233,7 +233,7 @@ CONFIRM_PROMPT BYTE 'Confirmar borrado? (1=Si, 0=No): ',0
 DEL_CANCEL BYTE 'Operacion cancelada.',0Dh,0Ah,0
 
 .data
-SaveFailMsg BYTE "Unable to save score to file.",0Dh,0Ah,0
-LoadFailMsg BYTE "No saved score for this player.",0Dh,0Ah,0
+SaveFailMsg BYTE 'No se pudo guardar el puntaje en el archivo.',0Dh,0Ah,0
+LoadFailMsg BYTE 'No hay puntaje guardado para este jugador.',0Dh,0Ah,0
 
 END

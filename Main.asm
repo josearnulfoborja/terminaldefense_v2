@@ -42,10 +42,10 @@ msgGoodbye    BYTE 0Dh,0Ah,"Sesion finalizada. Gracias por jugar.",0Dh,0Ah,0
 msgAuthAbort  BYTE "Saliendo del programa por fallo de autenticacion.",0Dh,0Ah,0
 buffer        BYTE 64 DUP(0)
 namePrompt    BYTE 'Ingrese nombre de jugador: ',0
-PLAYER_LABEL  BYTE 'PLAYER: ',0
+PLAYER_LABEL  BYTE 'JUGADOR: ',0
 LOG_CRLF      BYTE 0Dh,0Ah,0
-LOG_SESSION_START BYTE 'SESSION_START',0Dh,0Ah,0
-LOG_SESSION_END   BYTE 'SESSION_END',0Dh,0Ah,0
+LOG_SESSION_START BYTE 'SESION_INICIO',0Dh,0Ah,0
+LOG_SESSION_END   BYTE 'SESION_FIN',0Dh,0Ah,0
 
 ; --- Input ---
 inputBuffer   BYTE 64 DUP(0)
@@ -67,10 +67,10 @@ AUTH_PROMPT      BYTE 0Dh,0Ah,'== Autenticacion requerida ==',0Dh,0Ah,'Ingrese c
 AUTH_OK_MSG      BYTE 'Acceso concedido.',0Dh,0Ah,0
 AUTH_FAIL_MSG    BYTE 'Contrasena incorrecta.',0Dh,0Ah,0
 AUTH_LOCKED_MSG  BYTE 'Acceso denegado: se agotaron los intentos.',0Dh,0Ah,0
-LOG_AUTH_OK      BYTE 'AUTH: SUCCESS',0Dh,0Ah,0
-LOG_AUTH_FAIL    BYTE 'AUTH: FAIL',0Dh,0Ah,0
-LOG_AUTH_LOCKED  BYTE 'AUTH: LOCKED',0Dh,0Ah,0
-LOG_BLOCK_INC    BYTE 'SECURITY: ATTEMPT_INCREMENT',0Dh,0Ah,0
+LOG_AUTH_OK      BYTE 'AUTENTICACION: EXITO',0Dh,0Ah,0
+LOG_AUTH_FAIL    BYTE 'AUTENTICACION: FALLO',0Dh,0Ah,0
+LOG_AUTH_LOCKED  BYTE 'AUTENTICACION: BLOQUEADA',0Dh,0Ah,0
+LOG_BLOCK_INC    BYTE 'SEGURIDAD: INTENTO_INCREMENTADO',0Dh,0Ah,0
 
 ; --- Score ---
 playerScore   DWORD 0
@@ -89,10 +89,10 @@ searchPattern    BYTE 'scores_*.bin',0
 findData         BYTE 320 DUP(0)
 fullpathBuf      BYTE 512 DUP(0)
 logname          BYTE 'run.log',0
-LIST_HEADER      BYTE 0Dh,0Ah,'Saved score files:',0Dh,0Ah,0
-PATH_LABEL       BYTE 'Full path: ',0
-NO_FILES_MSG     BYTE 'No saved player files found.',0Dh,0Ah,0
-SCORE_LABEL      BYTE ' Score: ',0
+LIST_HEADER      BYTE 0Dh,0Ah,'Archivos de puntaje guardados:',0Dh,0Ah,0
+PATH_LABEL       BYTE 'Ruta completa: ',0
+NO_FILES_MSG     BYTE 'No se encontraron archivos de jugadores guardados.',0Dh,0Ah,0
+SCORE_LABEL      BYTE ' Puntaje: ',0
 DEL_PROMPT       BYTE 'Ingrese nombre de jugador a borrar: ',0
 DEL_OK           BYTE 'Archivo eliminado correctamente.',0Dh,0Ah,0
 DEL_FAIL         BYTE 'No se pudo eliminar (archivo no existe o error).',0Dh,0Ah,0
@@ -100,65 +100,95 @@ CONFIRM_LABEL    BYTE 'Archivo a borrar: ',0
 CONFIRM_PROMPT   BYTE 'Confirmar borrado? (1=Si, 0=No): ',0
 CONFIRM_INVALID  BYTE 'Ingrese 1 para confirmar o 0 para cancelar.',0Dh,0Ah,0
 DEL_CANCEL       BYTE 'Operacion cancelada.',0Dh,0Ah,0
-SaveFailMsg      BYTE "Unable to save score to file.",0Dh,0Ah,0
-LoadFailMsg      BYTE "No saved score for this player.",0Dh,0Ah,0
+SaveFailMsg      BYTE 'No se pudo guardar el puntaje en el archivo.',0Dh,0Ah,0
+LoadFailMsg      BYTE 'No hay puntaje guardado para este jugador.',0Dh,0Ah,0
 
 ; --- Game ---
-CATEGORY_PROMPT    BYTE 'Elija categoria (1-Facil, 2-Medio, 3-Dificil): ',0
+CATEGORY_PROMPT    BYTE 'Elija categoria (1-Matematicas, 2-Computacion, 3-Logica): ',0
 DIFFICULTY_PROMPT  BYTE 'Elija dificultad (1-Facil, 2-Medio, 3-Dificil): ',0
 NOT_ENOUGH         BYTE 'No hay suficientes preguntas en esa categoria/dificultad. Usando facil/1.',0Dh,0Ah,0
 INVALID_CAT        BYTE 'Categoria invalida. Usando Facil.',0Dh,0Ah,0
 MSG_CORRECT        BYTE 'Respuesta correcta!',0Dh,0Ah,0
 MSG_INCORRECT      BYTE 'Respuesta incorrecta.',0Dh,0Ah,0
 MSG_BLOCKED        BYTE 'Acceso bloqueado: excedio intentos.',0Dh,0Ah,0
-LOG_START_GAME     BYTE 'START_GAME',0Dh,0Ah,0
-LOG_ASK_CATEGORY   BYTE 'ASK_CATEGORY',0Dh,0Ah,0
-LOG_ASK_DIFFICULTY BYTE 'ASK_DIFFICULTY',0Dh,0Ah,0
-LOG_QUESTION_SHOWN BYTE 'QUESTION_SHOWN',0Dh,0Ah,0
-LOG_USER_ANSWERED  BYTE 'USER_ANSWERED',0Dh,0Ah,0
-LOG_CORRECT        BYTE 'RESULT: CORRECT',0Dh,0Ah,0
-LOG_INCORRECT      BYTE 'RESULT: INCORRECT',0Dh,0Ah,0
-LOG_BLOCKED        BYTE 'RESULT: BLOCKED',0Dh,0Ah,0
+LOG_START_GAME     BYTE 'INICIO_JUEGO',0Dh,0Ah,0
+LOG_ASK_CATEGORY   BYTE 'PEDIR_CATEGORIA',0Dh,0Ah,0
+LOG_ASK_DIFFICULTY BYTE 'PEDIR_DIFICULTAD',0Dh,0Ah,0
+LOG_QUESTION_SHOWN BYTE 'PREGUNTA_MOSTRADA',0Dh,0Ah,0
+LOG_USER_ANSWERED  BYTE 'USUARIO_RESPONDIO',0Dh,0Ah,0
+LOG_CORRECT        BYTE 'RESULTADO: CORRECTO',0Dh,0Ah,0
+LOG_INCORRECT      BYTE 'RESULTADO: INCORRECTO',0Dh,0Ah,0
+LOG_BLOCKED        BYTE 'RESULTADO: BLOQUEADO',0Dh,0Ah,0
 selectedDifficulty BYTE 0
 FINAL_MSG          BYTE 'Puntaje final: ',0
 SLASH_MSG          BYTE '/',0
 
 ; --- Questions ---
-numQuestions DWORD 18
-Q1  BYTE 'Facil: Cuanto es 2 + 2 ? ',0
-Q2  BYTE 'Facil: Cuanto es 3 + 5 ? ',0
-Q3  BYTE 'Facil: Cuanto es 7 - 4 ? ',0
-Q4  BYTE 'Facil: Cuanto es 6 * 3 ? ',0
-Q5  BYTE 'Facil: Cuanto es 12 / 3 ? ',0
-Q6  BYTE 'Facil: Cuanto es 9 + 1 ? ',0
-Q7  BYTE 'Medio: Cuanto es 15 - 7 ? ',0
-Q8  BYTE 'Medio: Cuanto es 4 * 5 ? ',0
-Q9  BYTE 'Medio: Cuanto es 36 / 6 ? ',0
-Q10 BYTE 'Medio: Cuanto es 9 * 9 ? ',0
-Q11 BYTE 'Medio: Cuanto es 14 + 6 ? ',0
-Q12 BYTE 'Medio: Cuanto es 20 - 3 ? ',0
-Q13 BYTE 'Dificil: Cuanto es 13 * 7 ? ',0
-Q14 BYTE 'Dificil: Cuanto es 144 / 12 ? ',0
-Q15 BYTE 'Dificil: Cuanto es 2^5 ? (potencia) ',0
-Q16 BYTE 'Dificil: Cuanto es 81 / 9 ? ',0
-Q17 BYTE 'Dificil: Cuanto es 17 + 25 ? ',0
-Q18 BYTE 'Dificil: Cuanto es 100 - 37 ? ',0
+; 3 categorias x 3 dificultades x 3 preguntas = 27 preguntas
+; Cat 1=Matematicas | Cat 2=Computacion | Cat 3=Logica
+; Diff 1=Facil      | Diff 2=Medio     | Diff 3=Dificil
+numQuestions DWORD 27
 
-QuestionTable DWORD OFFSET Q1, OFFSET Q2, OFFSET Q3, OFFSET Q4, OFFSET Q5, OFFSET Q6,
-              OFFSET Q7, OFFSET Q8, OFFSET Q9, OFFSET Q10, OFFSET Q11, OFFSET Q12,
-              OFFSET Q13, OFFSET Q14, OFFSET Q15, OFFSET Q16, OFFSET Q17, OFFSET Q18
+; Matematicas - Facil (Cat=1, Diff=1)
+Q1  BYTE 'Matematicas Facil: Cuanto es 2 + 2 ? ',0
+Q2  BYTE 'Matematicas Facil: Cuanto es 3 + 5 ? ',0
+Q3  BYTE 'Matematicas Facil: Cuanto es 10 - 4 ? ',0
+; Matematicas - Medio (Cat=1, Diff=2)
+Q4  BYTE 'Matematicas Medio: Cuanto es 6 * 7 ? ',0
+Q5  BYTE 'Matematicas Medio: Cuanto es 81 / 9 ? ',0
+Q6  BYTE 'Matematicas Medio: Cuanto es 25 - 13 ? ',0
+; Matematicas - Dificil (Cat=1, Diff=3)
+Q7  BYTE 'Matematicas Dificil: Cuanto es 13 * 7 ? ',0
+Q8  BYTE 'Matematicas Dificil: Cuanto es 17 + 25 ? ',0
+Q9  BYTE 'Matematicas Dificil: Cuanto es 2^5 (potencia de 2)? ',0
 
-AnswerTable DWORD 4, 8, 3, 18, 4, 10,
-            8, 20, 6, 81, 20, 17,
-            91, 12, 32, 9, 42, 63
+; Computacion - Facil (Cat=2, Diff=1)
+Q10 BYTE 'Computacion Facil: Cuantos bits tiene un byte ? ',0
+Q11 BYTE 'Computacion Facil: Cuanto es 2^3 ? ',0
+Q12 BYTE 'Computacion Facil: Cuantos nibbles tiene un byte ? ',0
+; Computacion - Medio (Cat=2, Diff=2)
+Q13 BYTE 'Computacion Medio: Cuanto es 1010 en decimal (base 2) ? ',0
+Q14 BYTE 'Computacion Medio: Cuantos bits hay en 2 bytes ? ',0
+Q15 BYTE 'Computacion Medio: Cuanto es 0x0F en decimal ? ',0
+; Computacion - Dificil (Cat=2, Diff=3)
+Q16 BYTE 'Computacion Dificil: Cuanto es 0xFF en decimal ? ',0
+Q17 BYTE 'Computacion Dificil: Cuantos KB tiene 1 MB ? ',0
+Q18 BYTE 'Computacion Dificil: Cuanto es 2^8 ? ',0
 
-CategoryTable   DWORD 1,1,1,1,1,1, 2,2,2,2,2,2, 3,3,3,3,3,3
-DifficultyTable DWORD 1,1,1,1,1,1, 2,2,2,2,2,2, 3,3,3,3,3,3
+; Logica - Facil (Cat=3, Diff=1)
+Q19 BYTE 'Logica Facil: Cuanto es 1 AND 1 ? ',0
+Q20 BYTE 'Logica Facil: Si A=2 y B=3, cuanto es A+B ? ',0
+Q21 BYTE 'Logica Facil: Cuanto es 1 OR 0 ? ',0
+; Logica - Medio (Cat=3, Diff=2)
+Q22 BYTE 'Logica Medio: Cuanto es 1 XOR 1 ? ',0
+Q23 BYTE 'Logica Medio: Si X=5, cuanto es X*X-X ? ',0
+Q24 BYTE 'Logica Medio: Cuantos numeros primos hay entre 1 y 10 ? ',0
+; Logica - Dificil (Cat=3, Diff=3)
+Q25 BYTE 'Logica Dificil: Si f(x)=2x+3, cuanto es f(5) ? ',0
+Q26 BYTE 'Logica Dificil: Cuanto es 100 mod 7 ? ',0
+Q27 BYTE 'Logica Dificil: Cuantos numeros primos hay entre 1 y 20 ? ',0
+
+QuestionTable DWORD OFFSET Q1,  OFFSET Q2,  OFFSET Q3,  OFFSET Q4,  OFFSET Q5,  OFFSET Q6,
+              OFFSET Q7,  OFFSET Q8,  OFFSET Q9,  OFFSET Q10, OFFSET Q11, OFFSET Q12,
+              OFFSET Q13, OFFSET Q14, OFFSET Q15, OFFSET Q16, OFFSET Q17, OFFSET Q18,
+              OFFSET Q19, OFFSET Q20, OFFSET Q21, OFFSET Q22, OFFSET Q23, OFFSET Q24,
+              OFFSET Q25, OFFSET Q26, OFFSET Q27
+
+; Respuestas verificadas
+AnswerTable DWORD 4,  8,  6,  42, 9,  12, 91, 42, 32,
+            8,  8,  2,  10, 16, 15, 255, 1024, 256,
+            1,  5,  1,  0,  20, 4,  13, 2,  8
+
+; Categoria por pregunta: 1=Matematicas(Q1-Q9), 2=Computacion(Q10-Q18), 3=Logica(Q19-Q27)
+CategoryTable   DWORD 1,1,1,1,1,1,1,1,1, 2,2,2,2,2,2,2,2,2, 3,3,3,3,3,3,3,3,3
+; Dificultad por pregunta: dentro de cada categoria hay 3 Facil, 3 Medio, 3 Dificil
+DifficultyTable DWORD 1,1,1,2,2,2,3,3,3, 1,1,1,2,2,2,3,3,3, 1,1,1,2,2,2,3,3,3
 
 currentCategory   DWORD 1
 currentDifficulty DWORD 1
 UsedFlags         DWORD 18 DUP(0)
 quizCounter       DWORD 0          ; contador de preguntas restantes en GameProc
+initialQuizCount  DWORD 0          ; total de preguntas de la partida (puntaje maximo)
 
 ; =============================================================================
 ;                                  CODIGO
@@ -921,6 +951,7 @@ SetCountDone:
 CountReady:
     mov DWORD PTR quizCounter, ecx               ; FIX: guardar contador en memoria,
                                                  ; porque ECX se destruye en los call
+    mov DWORD PTR initialQuizCount, ecx          ; guardar total para calcular puntaje maximo
 NextQ:
     call PickQuestion
     push ebx
@@ -972,19 +1003,7 @@ EndQuiz:
     call WriteInt
     mov edx, OFFSET SLASH_MSG
     call WriteString
-    mov al, [selectedDifficulty]
-    cmp al, 1
-    je CalcEasy
-    cmp al, 2
-    je CalcMed
-    mov eax, 5
-    jmp CalcDone
-CalcEasy:
-    mov eax, 3
-    jmp CalcDone
-CalcMed:
-    mov eax, 4
-CalcDone:
+    mov eax, DWORD PTR initialQuizCount   ; max = preguntas reales jugadas * 10
     imul eax, 10
     call WriteInt
     call SaveScore
