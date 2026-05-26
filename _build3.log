@@ -1,0 +1,5 @@
+Main.obj
+Main.exe
+ Assembling: Main.asm
+SmallWin.inc(11) : warning A4011: multiple .MODEL directives found : .MODEL ignored
+Presione una tecla para continuar . . . 

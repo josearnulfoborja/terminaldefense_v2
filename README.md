@@ -1,16 +1,9 @@
-# SecureGame: Terminal Defense (v2)
+# SecureGame: Terminal Defense
 
 Proyecto de Lenguaje Máquina desarrollado en **ensamblador x86 (MASM)** sobre la
 biblioteca **Irvine32**. El programa implementa un juego de preguntas y
 respuestas con un módulo de seguridad (autenticación, bloqueo por intentos),
 persistencia binaria por jugador y un registro (log) de eventos.
-
-> **Estado:** En desarrollo. Este repositorio (`terminaldefense_v2`) es la
-> segunda iteración del proyecto y está **abierto a la colaboración del
-> equipo**. La estructura, los módulos y las responsabilidades descritas a
-> continuación son el **plan acordado**; varios archivos aún no existen en el
-> repo y serán aportados por los integrantes del equipo (ver
-> [§11. Colaboración y reparto de trabajo](#11-colaboración-y-reparto-de-trabajo)).
 
 ---
 
@@ -22,7 +15,7 @@ luego elige categoría y dificultad, responde un cuestionario y obtiene un
 puntaje que se guarda en disco. Si falla demasiadas veces el acceso queda
 bloqueado.
 
-Funcionalidades principales (objetivo del v2):
+Funcionalidades principales:
 
 - Autenticación con contraseña y límite de intentos (`AuthProc`).
 - Menú principal con opciones: jugar, ver puntaje, borrar guardado, salir.
@@ -42,25 +35,22 @@ Funcionalidades principales (objetivo del v2):
 
 ## 2. Arquitectura del proyecto
 
-Aunque el proyecto se entregará como un **único archivo monolítico**
-(`Main.asm`) que se ensambla con el script de Irvine (`asm32.bat`),
-internamente está organizado en **módulos lógicos** correspondientes a los
-archivos `.asm` que se conservarán en la carpeta como referencia de la
-arquitectura modular del documento técnico:
+Aunque el proyecto se entrega como un **único archivo monolítico**
+([Main.asm](Main.asm)) que se ensambla con el script de Irvine
+([asm32.bat](asm32.bat)), internamente está organizado en **módulos lógicos**
+correspondientes a los archivos `.asm` que se conservan en la carpeta como
+referencia de la arquitectura modular del documento técnico:
 
-| Módulo      | Archivo         | Responsabilidad | Responsable |
-|-------------|-----------------|-----------------|-------------|
-| Main        | `Main.asm`      | Orquestación, menú principal, ciclo de vida de la sesión. | _por asignar_ |
-| Input       | `Input.asm`     | Lectura, *trim* y validación de entrada por consola. | _por asignar_ |
-| Game        | `Game.asm`      | Motor del juego: flujo de preguntas, puntaje y final de ronda. | _por asignar_ |
-| Security    | `Security.asm`  | Autenticación, conteo de intentos y bloqueo. | _por asignar_ |
-| Score       | `Score.asm`     | Administración del puntaje del jugador. | _por asignar_ |
-| FileIO      | `FileIO.asm`    | Persistencia binaria, listado, borrado y *append* de logs. | _por asignar_ |
-| Utils       | `Utils.asm`     | Rutinas auxiliares (`StrLen`, `TrimString`, `AsciiToInt`, `CompareString`). | _por asignar_ |
-| Questions   | `Questions.asm` | Banco de preguntas, tablas de categoría/dificultad y selección. | _por asignar_ |
-
-> Los compañeros deben completar la columna **Responsable** al unirse al
-> proyecto (ver §11).
+| Módulo      | Archivo               | Responsabilidad |
+|-------------|-----------------------|-----------------|
+| Main        | [Main.asm](Main.asm)         | Orquestación, menú principal, ciclo de vida de la sesión. |
+| Input       | [Input.asm](Input.asm)       | Lectura, *trim* y validación de entrada por consola. |
+| Game        | [Game.asm](Game.asm)         | Motor del juego: flujo de preguntas, puntaje y final de ronda. |
+| Security    | [Security.asm](Security.asm) | Autenticación, conteo de intentos y bloqueo. |
+| Score       | [Score.asm](Score.asm)       | Administración del puntaje del jugador. |
+| FileIO      | [FileIO.asm](FileIO.asm)     | Persistencia binaria, listado, borrado y *append* de logs. |
+| Utils       | [Utils.asm](Utils.asm)       | Rutinas auxiliares (`StrLen`, `TrimString`, `AsciiToInt`, `CompareString`). |
+| Questions   | [Questions.asm](Questions.asm) | Banco de preguntas, tablas de categoría/dificultad y selección. |
 
 ### 2.1. Diagrama de flujo de alto nivel
 
@@ -110,7 +100,7 @@ arquitectura modular del documento técnico:
 
 ## 3. Estructuras de datos
 
-Definidas en la sección `.data` de `Main.asm`:
+Definidas en la sección `.data` de [Main.asm](Main.asm):
 
 ### 3.1. Banco de preguntas (`Questions`)
 
@@ -179,10 +169,10 @@ El acceso por índice se hace con direccionamiento escalado:
   escribe la cadena apuntada por `EDX`.
 
 > **Nota técnica importante:** Las llamadas `INVOKE` con convención `stdcall`
-> destruyen `EAX/ECX/EDX`. Por eso `AppendLog` **debe guardar el puntero al
-> mensaje en la pila antes de cualquier `INVOKE`** y recuperarlo con
-> `mov esi, [esp+8]` antes de calcular su longitud y pasarlo a `WriteFile`.
-> De lo contrario el proceso muere por *access violation*.
+> destruyen `EAX/ECX/EDX`. Por eso `AppendLog` **guarda el puntero al mensaje
+> en la pila antes de cualquier `INVOKE`** y lo recupera con `mov esi, [esp+8]`
+> antes de calcular su longitud y pasarlo a `WriteFile`. De lo contrario el
+> proceso muere por *access violation*.
 
 ### 4.3. Seguridad (`Security`)
 
@@ -288,11 +278,13 @@ El acceso por índice se hace con direccionamiento escalado:
 
 - **Sistema operativo:** Windows (consola).
 - **Ensamblador:** MASM 32 bits (incluido en la distribución de Irvine).
-- **Biblioteca:** `Irvine32.inc` + `Irvine32.lib` (se incluirán en la carpeta).
-- **Headers adicionales:** `SmallWin.inc`, `Macros.inc`, `VirtualKeys.inc`.
-- **Linker:** se utilizará el linker referenciado por `asm32.bat`
-  (típicamente `link.exe` de Visual Studio 8 incluido en la carpeta
-  `Microsoft Visual Studio 8/Vc/Bin`).
+- **Biblioteca:** [Irvine32.inc](Irvine32.inc) + `Irvine32.lib` (incluidos en
+  la carpeta).
+- **Headers adicionales:** [SmallWin.inc](SmallWin.inc),
+  [Macros.inc](Macros.inc), [VirtualKeys.inc](VirtualKeys.inc).
+- **Linker:** se utiliza el linker referenciado por
+  [asm32.bat](asm32.bat) (típicamente `link.exe` de Visual Studio 8 que se
+  incluye en la carpeta `Microsoft Visual Studio 8/Vc/Bin`).
 
 ---
 
@@ -319,10 +311,10 @@ Main.exe
 
 ---
 
-## 8. Estructura de archivos prevista
+## 8. Estructura de archivos relevantes
 
 ```
-terminaldefense_v2/
+terminaldefense/
 ├── Main.asm              ← Archivo monolítico que se ensambla
 ├── asm32.bat             ← Script de compilación (Irvine)
 ├── make16.bat            ← Script auxiliar para Irvine16
@@ -342,23 +334,19 @@ terminaldefense_v2/
 └── scores_<player>.bin   ← Puntajes persistidos por jugador
 ```
 
-> **Nota:** actualmente este repo solo contiene el `README.md`. Los archivos
-> de arriba se irán incorporando conforme cada compañero entregue su módulo
-> (ver §11).
-
 ---
 
 ## 9. Decisiones técnicas destacadas
 
 1. **Monolítico vs. modular.** El documento técnico describe una arquitectura
    modular (un `.asm` por responsabilidad). Para simplificar el ensamblado con
-   el script de Irvine se consolidará todo en `Main.asm`. Los archivos
-   individuales se conservarán como documentación viva de la separación de
-   responsabilidades.
-2. **Preservación de `EDX` antes de `INVOKE`.** Documentado en `AppendLog`.
-   La convención `stdcall` no preserva `EAX/ECX/EDX`, por lo que el puntero
-   al mensaje **debe** guardarse en la pila antes de cualquier `INVOKE` y
-   recuperarse con `[esp+offset]`.
+   el script de Irvine se consolidó todo en [Main.asm](Main.asm). Los
+   archivos individuales se conservan como documentación viva de la
+   separación de responsabilidades.
+2. **Preservación de `EDX` antes de `INVOKE`.** Documentado en `AppendLog`
+   ([Main.asm](Main.asm#L308)). La convención `stdcall` no preserva
+   `EAX/ECX/EDX`, por lo que el puntero al mensaje **debe** guardarse en la
+   pila antes de cualquier `INVOKE` y recuperarse con `[esp+offset]`.
 3. **Contador del cuestionario en memoria (`quizCounter`).** En `GameProc` el
    contador de preguntas restantes se guarda en memoria en lugar de mantenerse
    en `ECX`, porque los `call` intermedios destruyen el registro.
@@ -373,56 +361,10 @@ terminaldefense_v2/
 
 ## 10. Limitaciones conocidas
 
-- La contraseña estará **hardcodeada** en `expectedPassword` (no apta para
-  uso real; es un proyecto académico).
+- La contraseña está **hardcodeada** en `expectedPassword` (no apta para uso
+  real; es un proyecto académico).
 - `scores_<player>.bin` se **sobreescribe** en cada partida; no hay historial.
 - La validación de longitud de `playerName` se limita a `ReadString ECX = 31`.
 - `run.log` crece de forma indefinida (no hay rotación).
-- El "modo demo" depende de que el linker/Irvine32 incluidos en la carpeta
-  sean compatibles con el Windows host.
-
----
-
-## 11. Colaboración y reparto de trabajo
-
-Este proyecto se desarrolla en equipo. Para evitar conflictos al integrar el
-`Main.asm` monolítico, se trabaja con la siguiente convención:
-
-### 11.1. Flujo de trabajo Git
-
-1. Clonar el repo y crear una rama por módulo o tarea:
-   ```bat
-   git checkout -b feature/<modulo>-<tu-nombre>
-   ```
-2. Trabajar **solo** en el archivo `.asm` del módulo asignado (ver tabla
-   §2). No editar `Main.asm` directamente salvo el/la responsable de
-   integración.
-3. Hacer commits pequeños y descriptivos.
-4. Abrir un **Pull Request** hacia `main` y pedir revisión a al menos un
-   compañero antes de hacer merge.
-5. El/la responsable de integración consolida los módulos aprobados dentro
-   de `Main.asm` para el build final.
-
-### 11.2. Tareas pendientes para los compañeros
-
-- [ ] Asignar responsables en la tabla §2.
-- [ ] Aportar la biblioteca Irvine (`Irvine32.inc`, `Irvine32.lib`,
-      `SmallWin.inc`, `Macros.inc`, `VirtualKeys.inc`) y los scripts
-      `asm32.bat` / `make16.bat`.
-- [ ] Implementar cada módulo en su `.asm` correspondiente respetando las
-      convenciones de §2.2 y los contratos de §4.
-- [ ] Integrar los módulos en `Main.asm` y verificar que ensambla con
-      `asm32 Main`.
-- [ ] Pruebas manuales del flujo completo: autenticación, partida por
-      cada combinación de categoría × dificultad, guardado/carga, borrado y
-      bloqueo por intentos.
-- [ ] Revisar `run.log` para confirmar que todos los eventos de §5.2 se
-      registran.
-- [ ] Documentar cualquier cambio respecto a las credenciales o parámetros
-      de §7.
-
-### 11.3. Contacto
-
-Coordinar dudas y avances por el canal habitual del equipo. Documentar
-cualquier decisión de diseño nueva en este `README.md` mediante PR.
-
+- El bucle "modo demo" depende de que el linker/Irvine32 incluidos en la
+  carpeta sean compatibles con el Windows host.

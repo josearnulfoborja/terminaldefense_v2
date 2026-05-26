@@ -1,0 +1,11 @@
+Main.obj
+Main.exe
+ Assembling: Main.asm
+SmallWin.inc(11) : warning A4011: multiple .MODEL directives found : .MODEL ignored
+
+Linking Assembler output files to the Irvine32, Kernel32, and User32 libraries.
+
+Linker successful. The executable file Main.exe was produced.
+..................................
+
+^C
