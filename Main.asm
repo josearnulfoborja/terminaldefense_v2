@@ -52,6 +52,9 @@ inputBuffer   BYTE 64 DUP(0)
 MAX_INPUT_LEN DWORD 63
 MSG_EMPTY     BYTE 'Entrada vacia. Intente de nuevo.',0Dh,0Ah,0
 MSG_TOO_LONG  BYTE 'Entrada demasiado larga.',0Dh,0Ah,0
+MSG_INVALID_NUM BYTE 'Entrada invalida. Ingrese un numero valido.',0Dh,0Ah,0
+MSG_INVALID_OPTION BYTE 'Opcion fuera de rango. Intente de nuevo.',0Dh,0Ah,0
+MSG_EMPTY_NAME BYTE 'Nombre invalido. Intente de nuevo.',0Dh,0Ah,0
 MENU_TEXT     BYTE 0Dh,0Ah, '1 - Jugar',0Dh,0Ah, '2 - Ver puntaje',0Dh,0Ah, '3 - Borrar guardado',0Dh,0Ah, '0 - Salir',0Dh,0Ah,'Ingrese opcion: ',0
 
 ; --- Security ---
@@ -95,6 +98,7 @@ DEL_OK           BYTE 'Archivo eliminado correctamente.',0Dh,0Ah,0
 DEL_FAIL         BYTE 'No se pudo eliminar (archivo no existe o error).',0Dh,0Ah,0
 CONFIRM_LABEL    BYTE 'Archivo a borrar: ',0
 CONFIRM_PROMPT   BYTE 'Confirmar borrado? (1=Si, 0=No): ',0
+CONFIRM_INVALID  BYTE 'Ingrese 1 para confirmar o 0 para cancelar.',0Dh,0Ah,0
 DEL_CANCEL       BYTE 'Operacion cancelada.',0Dh,0Ah,0
 SaveFailMsg      BYTE "Unable to save score to file.",0Dh,0Ah,0
 LoadFailMsg      BYTE "No saved score for this player.",0Dh,0Ah,0
@@ -410,19 +414,35 @@ ListSavedPlayers ENDP
 
 ; DeleteSavedPlayer: pide nombre y elimina scores_<nombre>.bin
 DeleteSavedPlayer PROC
+AskDeleteName:
     mov edx, OFFSET DEL_PROMPT
     call WriteString
     mov edx, OFFSET playerName
     mov ecx, 31
     call ReadString
+    mov edx, OFFSET playerName
+    call TrimString
+    mov edx, OFFSET playerName
+    call StrLen
+    cmp eax, 0
+    jne NameOk
+    mov edx, OFFSET MSG_EMPTY_NAME
+    call WriteString
+    jmp AskDeleteName
+NameOk:
     call BuildFilename
     mov edx, OFFSET CONFIRM_LABEL
     call WriteString
     mov edx, OFFSET filebuf
     call WriteString
+AskDeleteConfirm:
     mov edx, OFFSET CONFIRM_PROMPT
     call WriteString
-    call ReadInt
+    call ReadValidatedInt
+    cmp eax, 0
+    jl DelConfirmInvalid
+    cmp eax, 1
+    jg DelConfirmInvalid
     cmp eax, 1
     jne DelCanceled
     INVOKE DeleteFileA, ADDR filebuf
@@ -439,6 +459,10 @@ DelCanceled:
     mov edx, OFFSET DEL_CANCEL
     call WriteString
     ret
+DelConfirmInvalid:
+    mov edx, OFFSET CONFIRM_INVALID
+    call WriteString
+    jmp AskDeleteConfirm
 DeleteSavedPlayer ENDP
 
 ; AppendLog: escribe la cadena en EDX al final de run.log
@@ -741,11 +765,67 @@ InErrTooLong:
     ret
 InputProc ENDP
 
+; ReadValidatedInt: solicita y valida entero estricto desde inputBuffer
+ReadValidatedInt PROC
+    push esi
+ReadIntRetry:
+    call InputProc
+    cmp eax, 0
+    jne ReadIntRetry
+
+    mov esi, OFFSET inputBuffer
+    mov al, [esi]
+    cmp al, '+'
+    je SkipSign
+    cmp al, '-'
+    jne CheckFirstDigit
+SkipSign:
+    inc esi
+
+CheckFirstDigit:
+    mov al, [esi]
+    cmp al, '0'
+    jl  InvalidNum
+    cmp al, '9'
+    jg  InvalidNum
+
+DigitLoop:
+    mov al, [esi]
+    cmp al, 0
+    je  ParseNum
+    cmp al, '0'
+    jl  InvalidNum
+    cmp al, '9'
+    jg  InvalidNum
+    inc esi
+    jmp DigitLoop
+
+InvalidNum:
+    mov edx, OFFSET MSG_INVALID_NUM
+    call WriteString
+    jmp ReadIntRetry
+
+ParseNum:
+    mov edx, OFFSET inputBuffer
+    call AsciiToInt
+    pop esi
+    ret
+ReadValidatedInt ENDP
+
 MenuProc PROC
+MenuRetry:
     mov edx, OFFSET MENU_TEXT
     call WriteString
-    call ReadInt
+    call ReadValidatedInt
+    cmp eax, 0
+    jl  MenuInvalid
+    cmp eax, 3
+    jg  MenuInvalid
     ret
+MenuInvalid:
+    mov edx, OFFSET MSG_INVALID_OPTION
+    call WriteString
+    jmp MenuRetry
 MenuProc ENDP
 
 ; -----------------------------------------------------------------------------
@@ -765,53 +845,48 @@ GameProc PROC
     mov edx, OFFSET LOG_START_GAME
     call AppendLog
 
-    ; Pedir categoria
+AskCategory:
     mov edx, OFFSET LOG_ASK_CATEGORY
     call AppendLog
     mov edx, OFFSET CATEGORY_PROMPT
     call WriteString
-    call ReadInt
+    call ReadValidatedInt
     cmp eax, 1
-    jl UseDefaultCat
+    jl CategoryInvalid
     cmp eax, 3
-    jg UseDefaultCat
+    jg CategoryInvalid
     call SetCategory
+    jmp AskDifficulty
 
-    ; Pedir dificultad
+CategoryInvalid:
+    mov edx, OFFSET MSG_INVALID_OPTION
+    call WriteString
+    jmp AskCategory
+
+AskDifficulty:
     mov edx, OFFSET LOG_ASK_DIFFICULTY
     call AppendLog
     mov edx, OFFSET DIFFICULTY_PROMPT
     call WriteString
-    call ReadInt
-    mov [selectedDifficulty], al
+    call ReadValidatedInt
     cmp eax, 1
-    jl UseDefaultDiff
+    jl DifficultyInvalid
     cmp eax, 3
-    jg UseDefaultDiff
+    jg DifficultyInvalid
+    mov [selectedDifficulty], al
     call SetDifficulty
     jmp CheckRemaining
 
-UseDefaultDiff:
-    mov eax, 1
-    call SetDifficulty
-    jmp CheckRemaining
-
-UseDefaultCat:
-    mov eax, 1
-    mov edx, OFFSET INVALID_CAT
+DifficultyInvalid:
+    mov edx, OFFSET MSG_INVALID_OPTION
     call WriteString
-    call SetCategory
-    mov eax, 1
-    call SetDifficulty
+    jmp AskDifficulty
 
 CheckRemaining:
     call RemainingCount
-    cmp eax, 1
+    cmp eax, 0
     je NotEnough
-    mov ecx, 3
-    cmp eax, ecx
-    jge StartQuiz
-    mov ecx, eax
+    mov DWORD PTR quizCounter, eax               ; guardar disponibles
     jmp StartQuiz
 
 NotEnough:
@@ -821,7 +896,9 @@ NotEnough:
     call SetCategory
     mov eax, 1
     call SetDifficulty
-    mov ecx, 3
+    mov BYTE PTR [selectedDifficulty], 1
+    call RemainingCount
+    mov DWORD PTR quizCounter, eax
 
 StartQuiz:
     mov al, [selectedDifficulty]
@@ -837,6 +914,11 @@ UseEasyCount:
 UseMedCount:
     mov ecx, 4
 SetCountDone:
+    mov eax, DWORD PTR quizCounter
+    cmp eax, ecx
+    jge CountReady
+    mov ecx, eax
+CountReady:
     mov DWORD PTR quizCounter, ecx               ; FIX: guardar contador en memoria,
                                                  ; porque ECX se destruye en los call
 NextQ:
@@ -854,7 +936,7 @@ NextQ:
     call WriteString
     mov edx, OFFSET LOG_USER_ANSWERED
     call AppendLog
-    call ReadInt
+    call ReadValidatedInt
     pop ebx
     mov esi, eax
     cmp esi, ebx
@@ -944,6 +1026,7 @@ MainProc PROC
 AuthOk:
 
     ; Nombre de jugador
+AskPlayerName:
     mov edx, OFFSET namePrompt
     call WriteString
     mov edx, OFFSET playerName
@@ -951,6 +1034,14 @@ AuthOk:
     call ReadString
     mov edx, OFFSET playerName
     call TrimString
+    mov edx, OFFSET playerName
+    call StrLen
+    cmp eax, 0
+    jne PlayerNameOk
+    mov edx, OFFSET MSG_EMPTY_NAME
+    call WriteString
+    jmp AskPlayerName
+PlayerNameOk:
 
     ; Log player
     mov edx, OFFSET PLAYER_LABEL
