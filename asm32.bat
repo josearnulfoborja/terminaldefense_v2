@@ -80,15 +80,15 @@ rem   03/04/2007: Created a loop to permit the linker to link multiple
 rem               obj files. Examples added to remarks section.
 rem
 rem   El Salvador, Centro America
-rem   25/06/2010: Make portable for fun, by Carlos Vásquez Espino
+rem   25/06/2010: Make portable for fun, by Carlos Vï¿½squez Espino
 rem               run in any media (usb, cd, dvd), in "\Irvine" directory.
-rem   03/02/2011: By Carlos Vásquez Espino
+rem   03/02/2011: By Carlos Vï¿½squez Espino
 rem               run in any media (usb, cd, dvd) and any directory.
-rem   24/04/2016: By Carlos Vásquez Espino
+rem   24/04/2016: By Carlos Vï¿½squez Espino
 rem               Permit compile files ina any path
-rem   07/05/2020: By Carlos Vásquez Espino
+rem   07/05/2020: By Carlos Vï¿½squez Espino
 rem               If compile was successful, run it!!!
-rem   23/01/2021: By Carlos Vásquez Espino
+rem   23/01/2021: By Carlos Vï¿½squez Espino
 rem               Accept long file names and spaces using "" 
 rem  --------------------------------------------------------------------
 
@@ -136,14 +136,14 @@ rem Delete the old object file
 rem ----------------------------------
 rem Added by Carlos Vasquez 14/05/2020 (del %1.exe)
 
-if exist %1.exe del %1.exe    
+if %LINKING%==yes if exist %1.exe del %1.exe    
 if exist %1.obj del %1.obj
 @echo %1.obj
 @echo %1.exe
 
 rem -----------------------------------------------------------------
 rem      Ubica la ruta desde donde se esta ejecutando el batch
-rem         By: Carlos Edgardo Vásquez Espino, El Salvador   
+rem         By: Carlos Edgardo Vï¿½squez Espino, El Salvador   
 rem -----------------------------------------------------------------
 SET DRIVE=#
 IF EXIST "%cd%\Irvine32.inc" SET DRIVE=%cd%
@@ -320,4 +320,4 @@ If Not Exist %1.exe Pause
 Rem Para ver los ecos de las macros, poner pausa
 Rem Pause
 COLOR 0A
-If Exist %1.exe %1
+rem If Exist %1.exe %1
